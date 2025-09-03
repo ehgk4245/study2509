@@ -45,10 +45,11 @@ public class Post extends BaseEntity {
         return postComment;
     }
 
-    public Optional<PostComment> findCommentById(Long id) {
+    public PostComment findCommentById(Long id) {
         return comments.stream()
                 .filter(postComment -> Objects.equals(postComment.getId(), id))
-                .findFirst();
+                .findFirst()
+                .orElseThrow(() -> new EntityNotFoundException("%d번 comment가 존재하지 않습니다".formatted(id)));
     }
 
     public boolean deleteComment(PostComment postComment) {
