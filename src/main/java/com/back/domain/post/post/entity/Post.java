@@ -1,14 +1,17 @@
 package com.back.domain.post.post.entity;
 
+import com.back.domain.post.postComment.entity.PostComment;
 import com.back.global.jpa.entity.BaseEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 @Entity
 @Getter
@@ -24,8 +27,33 @@ public class Post extends BaseEntity {
     private String title;
     private String content;
 
+    @Builder.Default
+    @OneToMany(mappedBy = "post", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
+    private List<PostComment> comments = new ArrayList<>();
+
     public void modify(String title, String content) {
         this.title = title;
         this.content = content;
+    }
+
+    public PostComment addComment(String content) {
+        PostComment postComment = PostComment.builder()
+                .content(content)
+                .post(this)
+                .build();
+        comments.add(postComment);
+        return postComment;
+    }
+
+    public Optional<PostComment> findCommentById(Long id) {
+        return comments.stream()
+                .filter(postComment -> Objects.equals(postComment.getId(), id))
+                .findFirst();
+    }
+
+    public boolean deleteComment(PostComment postComment) {
+        if (postComment == null) return false;
+
+        return comments.remove(postComment);
     }
 }
