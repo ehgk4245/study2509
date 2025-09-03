@@ -1,5 +1,6 @@
 package com.back.domain.post.post.service;
 
+import com.back.domain.post.post.dto.PostResponseDto;
 import com.back.domain.post.post.entity.Post;
 import com.back.domain.post.post.repository.PostRepository;
 import com.back.domain.post.postComment.entity.PostComment;
@@ -34,8 +35,11 @@ public class PostService {
         post.modify(title, content);
     }
 
-    public List<Post> getList() {
-        return postRepository.findAll();
+    public List<PostResponseDto> getList() {
+        List<Post> posts = postRepository.findAll();
+        return posts.stream()
+                .map(PostResponseDto::from)
+                .toList();
     }
 
     public Post getPost(Long id) {
