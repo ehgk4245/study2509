@@ -38,6 +38,7 @@ public class PostService {
                 .toList();
     }
 
+    @Transactional
     public void createComment(Post post, String content) {
         post.addComment(content);
     }
@@ -66,7 +67,7 @@ public class PostService {
     }
 
     private Post getPostOrThrow(Long postId) {
-        return postRepository.findById(postId).orElseThrow(
+        return postRepository.findByIdWithComments(postId).orElseThrow(
                 () -> new EntityNotFoundException("게시글이 존재하지 않습니다.")
         );
     }
