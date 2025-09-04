@@ -1,6 +1,7 @@
 package com.back.domain.post.post.service;
 
-import com.back.domain.post.post.dto.PostResponseDto;
+import com.back.domain.post.post.dto.request.PostWriteReq;
+import com.back.domain.post.post.dto.response.PostRes;
 import com.back.domain.post.post.entity.Post;
 import com.back.domain.post.post.repository.PostRepository;
 import com.back.domain.post.postComment.dto.PostCommentResponseDto;
@@ -24,17 +25,15 @@ public class PostService {
     }
 
     @Transactional
-    public Post create(String title, String content) {
-        return postRepository.save(Post.builder()
-                .title(title)
-                .content(content)
-                .build());
+    public Post create(PostWriteReq postWriteReq) {
+        Post post = postWriteReq.toEntity();
+        return postRepository.save(post);
     }
 
-    public List<PostResponseDto> getCommentsInPost() {
+    public List<PostRes> getCommentsInPost() {
         List<Post> posts = postRepository.findAll();
         return posts.stream()
-                .map(PostResponseDto::from)
+                .map(PostRes::from)
                 .toList();
     }
 
@@ -66,15 +65,20 @@ public class PostService {
         return true;
     }
 
-    private Post getPostOrThrow(Long postId) {
-        return postRepository.findByIdWithComments(postId).orElseThrow(
-                () -> new EntityNotFoundException("게시글이 존재하지 않습니다.")
-        );
-    }
-
     @Transactional
     public boolean deletePost(Long id) {
         postRepository.deleteById(id);
         return true;
+    }
+
+    public PostRes getPost(Long id) {
+        Post post = getPostOrThrow(id);
+        return PostRes.from(post);
+    }
+
+    private Post getPostOrThrow(Long postId) {
+        return postRepository.findByIdWithComments(postId).orElseThrow(
+                () -> new EntityNotFoundException("게시글이 존재하지 않습니다.")
+        );
     }
 }

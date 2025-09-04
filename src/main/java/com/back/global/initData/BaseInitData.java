@@ -1,5 +1,6 @@
 package com.back.global.initData;
 
+import com.back.domain.post.post.dto.request.PostWriteReq;
 import com.back.domain.post.post.entity.Post;
 import com.back.domain.post.post.service.PostService;
 import lombok.RequiredArgsConstructor;
@@ -31,9 +32,9 @@ public class BaseInitData {
     public void work1() {
         if (postService.count() > 0) return;
 
-        Post post1 = postService.create("제목 1", "내용 1");
-        Post post2 = postService.create("제목 1", "내용 1");
-        Post post3 = postService.create("제목 1", "내용 1");
+        Post post1 = postService.create(new PostWriteReq("제목 1", "내용 1"));
+        Post post2 = postService.create(new PostWriteReq("제목 2", "내용 2"));
+        Post post3 = postService.create(new PostWriteReq("제목 3", "내용 3"));
 
         postService.createComment(post1, "댓글 1 - 1");
         postService.createComment(post1, "댓글 1 - 2");
