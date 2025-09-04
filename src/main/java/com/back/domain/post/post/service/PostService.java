@@ -71,4 +71,10 @@ public class PostService {
                 () -> new EntityNotFoundException("게시글이 존재하지 않습니다.")
         );
     }
+
+    @Transactional
+    public boolean deletePost(Long id) {
+        postRepository.deleteById(id);
+        return true;
+    }
 }
