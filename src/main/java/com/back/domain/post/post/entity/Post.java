@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 @Entity
 @Getter
@@ -30,11 +29,6 @@ public class Post extends BaseEntity {
     @Builder.Default
     @OneToMany(mappedBy = "post", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
     private List<PostComment> comments = new ArrayList<>();
-
-    public void modify(String title, String content) {
-        this.title = title;
-        this.content = content;
-    }
 
     public PostComment addComment(String content) {
         PostComment postComment = PostComment.builder()

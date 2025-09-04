@@ -3,6 +3,7 @@ package com.back.domain.post.post.service;
 import com.back.domain.post.post.dto.PostResponseDto;
 import com.back.domain.post.post.entity.Post;
 import com.back.domain.post.post.repository.PostRepository;
+import com.back.domain.post.postComment.dto.PostCommentResponseDto;
 import com.back.domain.post.postComment.entity.PostComment;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -30,33 +31,43 @@ public class PostService {
                 .build());
     }
 
-    @Transactional
-    public void update(Post post, String title, String content) {
-        post.modify(title, content);
-    }
-
-    public List<PostResponseDto> getList() {
+    public List<PostResponseDto> getCommentsInPost() {
         List<Post> posts = postRepository.findAll();
         return posts.stream()
                 .map(PostResponseDto::from)
                 .toList();
     }
 
-    public Post getPost(Long id) {
-        return postRepository.findById(id).orElseThrow(
-                () -> new EntityNotFoundException("게시글이 존재하지 않습니다.")
-        );
-    }
-
     public void createComment(Post post, String content) {
         post.addComment(content);
     }
 
-    public boolean deleteComment(Post post, PostComment postComment) {
-        return post.deleteComment(postComment);
+    public List<PostCommentResponseDto> getCommentsInPost(Long postId) {
+        Post post = getPostOrThrow(postId);
+        List<PostComment> comments = post.getComments();
+
+        return comments.stream()
+                .map(PostCommentResponseDto::from)
+                .toList();
     }
 
-    public void modify(PostComment postComment, String content) {
-        postComment.modify(content);
+    public PostCommentResponseDto getCommentInPost(Long postId, Long commentId) {
+        Post post = getPostOrThrow(postId);
+        PostComment comment = post.findCommentById(commentId);
+        return PostCommentResponseDto.from(comment);
+    }
+
+    @Transactional
+    public boolean deleteCommentInPost(Long postId, Long commentId) {
+        Post post = getPostOrThrow(postId);
+        PostComment comment = post.findCommentById(commentId);
+        post.deleteComment(comment);
+        return true;
+    }
+
+    private Post getPostOrThrow(Long postId) {
+        return postRepository.findById(postId).orElseThrow(
+                () -> new EntityNotFoundException("게시글이 존재하지 않습니다.")
+        );
     }
 }

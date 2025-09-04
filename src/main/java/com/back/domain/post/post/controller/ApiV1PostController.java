@@ -18,6 +18,6 @@ public class ApiV1PostController {
 
     @GetMapping
     public List<PostResponseDto> getItems() {
-        return postService.getList();
+        return postService.getCommentsInPost();
     }
 }
