@@ -4,15 +4,15 @@ import com.back.domain.post.post.entity.Post;
 
 import java.time.LocalDateTime;
 
-public record PostRes(
+public record PostResponse(
         Long id,
         String subject,
         String body,
         LocalDateTime createdDate,
         LocalDateTime modifiedDate
 ) {
-    public static PostRes from(Post post) {
-        return new PostRes(
+    public static PostResponse from(Post post) {
+        return new PostResponse(
                 post.getId(),
                 post.getTitle(),
                 post.getContent(),

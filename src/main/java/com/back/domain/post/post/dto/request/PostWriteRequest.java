@@ -4,7 +4,7 @@ import com.back.domain.post.post.entity.Post;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
-public record PostWriteReq(
+public record PostWriteRequest(
         @NotBlank @Size(min = 2, max = 100)
         String title,
 

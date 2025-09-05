@@ -1,10 +1,11 @@
 package com.back.domain.post.post.service;
 
-import com.back.domain.post.post.dto.request.PostWriteReq;
-import com.back.domain.post.post.dto.response.PostRes;
+import com.back.domain.post.post.dto.request.PostWriteRequest;
+import com.back.domain.post.post.dto.response.PostResponse;
 import com.back.domain.post.post.entity.Post;
 import com.back.domain.post.post.repository.PostRepository;
-import com.back.domain.post.postComment.dto.PostCommentResponseDto;
+import com.back.domain.post.postComment.dto.PostCommentResponse;
+import com.back.domain.post.postComment.dto.PostCommentUpdateRequest;
 import com.back.domain.post.postComment.entity.PostComment;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -25,15 +26,15 @@ public class PostService {
     }
 
     @Transactional
-    public Post create(PostWriteReq postWriteReq) {
-        Post post = postWriteReq.toEntity();
+    public Post create(PostWriteRequest postWriteRequest) {
+        Post post = postWriteRequest.toEntity();
         return postRepository.save(post);
     }
 
-    public List<PostRes> getCommentsInPost() {
+    public List<PostResponse> getCommentsInPost() {
         List<Post> posts = postRepository.findAll();
         return posts.stream()
-                .map(PostRes::from)
+                .map(PostResponse::from)
                 .toList();
     }
 
@@ -42,19 +43,19 @@ public class PostService {
         post.addComment(content);
     }
 
-    public List<PostCommentResponseDto> getCommentsInPost(Long postId) {
+    public List<PostCommentResponse> getCommentsInPost(Long postId) {
         Post post = getPostOrThrow(postId);
         List<PostComment> comments = post.getComments();
 
         return comments.stream()
-                .map(PostCommentResponseDto::from)
+                .map(PostCommentResponse::from)
                 .toList();
     }
 
-    public PostCommentResponseDto getCommentInPost(Long postId, Long commentId) {
+    public PostCommentResponse getCommentInPost(Long postId, Long commentId) {
         Post post = getPostOrThrow(postId);
         PostComment comment = post.findCommentById(commentId);
-        return PostCommentResponseDto.from(comment);
+        return PostCommentResponse.from(comment);
     }
 
     @Transactional
@@ -71,9 +72,16 @@ public class PostService {
         return true;
     }
 
-    public PostRes getPost(Long id) {
+    public PostResponse getPost(Long id) {
         Post post = getPostOrThrow(id);
-        return PostRes.from(post);
+        return PostResponse.from(post);
+    }
+
+    @Transactional
+    public void updateCommentInPost(Long postId, Long commentId, PostCommentUpdateRequest postCommentUpdateRequest) {
+        Post post = getPostOrThrow(postId);
+        PostComment comment = post.findCommentById(commentId);
+        comment.modify(postCommentUpdateRequest.content());
     }
 
     private Post getPostOrThrow(Long postId) {

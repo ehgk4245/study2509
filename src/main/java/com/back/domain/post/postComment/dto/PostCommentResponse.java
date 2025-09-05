@@ -4,14 +4,14 @@ import com.back.domain.post.postComment.entity.PostComment;
 
 import java.time.LocalDateTime;
 
-public record PostCommentResponseDto(
+public record PostCommentResponse(
         Long id,
         String content,
         LocalDateTime createdDate,
         LocalDateTime modifiedDate
 ) {
-    public static PostCommentResponseDto from(PostComment postComment) {
-        return new PostCommentResponseDto(
+    public static PostCommentResponse from(PostComment postComment) {
+        return new PostCommentResponse(
                 postComment.getId(),
                 postComment.getContent(),
                 postComment.getCreateDate(),
